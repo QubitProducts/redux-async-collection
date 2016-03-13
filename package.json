@@ -1,0 +1,60 @@
+{
+  "name": "redux-async-collection",
+  "version": "1.0.0",
+  "description": "Creates a reducer, immutable state and actions for an async collection",
+  "main": "dist/createCollection.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/QubitProducts/redux-async-collection.git"
+  },
+  "keywords": [
+    "redux",
+    "react",
+    "immutable"
+  ],
+  "author": "James Hollingworth",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/QubitProducts/redux-async-collection/issues"
+  },
+  "homepage": "https://github.com/QubitProducts/redux-async-collection#readme",
+  "devDependencies": {
+    "babel-cli": "^6.6.5",
+    "babel-eslint": "^5.0.0",
+    "babel-preset-es2015": "^6.6.0",
+    "babel-register": "^6.7.2",
+    "chai": "^3.5.0",
+    "chai-immutable": "^1.5.3",
+    "mocha": "^2.4.5",
+    "redux": "^3.3.1",
+    "redux-thunk": "^2.0.1",
+    "sinon": "^1.17.3",
+    "sinon-chai": "^2.8.0",
+    "standard": "^6.0.8",
+    "when": "^3.7.7"
+  },
+  "dependencies": {
+    "axios": "^0.9.1",
+    "immutable": "^3.7.6",
+    "invariant": "^2.2.1",
+    "lodash": "^4.6.1"
+  },
+  "standard": {
+    "parser": "babel-eslint",
+    "global": [
+      "describe",
+      "it",
+      "beforeEach",
+      "afterEach",
+      "before",
+      "after",
+      "rewire"
+    ],
+    "ignore": [
+      "dist/*"
+    ]
+  }
+}

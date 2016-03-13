@@ -23,11 +23,11 @@ describe('createCollection', () => {
   let requestConfig
 
   beforeEach(() => {
+    fooId = 123
+    barId = 'B-12'
     get = sinon.spy(() => res)
     sandbox = sinon.sandbox.create()
     sandbox.stub(axios, 'get', get)
-    fooId = 123
-    barId = 'B-12'
     requestConfig = { timeout: REQUEST_TIMEOUT }
     expectedUrl = createUrl(fooId, barId)
     collection = createCollection('Thing', createUrl)

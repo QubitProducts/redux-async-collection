@@ -18,7 +18,7 @@ bootstrap: package.json
 
 build:
 	@rm -rf dist && mkdir dist
-	@NODE_ENV=production $(BIN)/babel ./src/createCollection.js --out-file ./dist/createCollection.js
+	@NODE_ENV=production $(BIN)/babel ./src --out-dir ./dist
 
 release-patch:
 	@inc=patch ./scripts/release.sh

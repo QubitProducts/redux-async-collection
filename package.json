@@ -40,7 +40,7 @@
     "axios": "^0.9.1",
     "immutable": "^3.7.6",
     "invariant": "^2.2.1",
-    "lodash": "^4.6.1"
+    "lodash": "^3.6.0"
   },
   "standard": {
     "parser": "babel-eslint",

@@ -18,7 +18,7 @@ bootstrap: package.json
 
 build:
 	@rm -rf dist && mkdir dist
-	@NODE_ENV=production $(BIN)/babel ./src --out-dir ./dist
+	@NODE_ENV=production $(BIN)/babel ./src --out-dir ./dist --source-maps inline
 
 release-patch:
 	@inc=patch ./scripts/release.sh

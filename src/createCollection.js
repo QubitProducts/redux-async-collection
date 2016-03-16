@@ -97,6 +97,10 @@ function createFetchForCollection (name, createUrl, isResponseValid, constants) 
       }
 
       function dispatchError (error) {
+        if (error instanceof Error) {
+          console.error(`Failed to reduce ${FINISHED}. This is probably an error in your reducer or a \`connect\`.`, error)
+        }
+
         dispatch({
           type: FAILED,
           error: true,

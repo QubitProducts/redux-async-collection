@@ -14,6 +14,7 @@ export default function createCollection (name, createUrl, isResponseValid = _.i
 
   const add = createAdd(name, constants)
   const deleteItem = createDeleteItem(name, constants)
+  const update = createUpdate(name, constants)
   const reducer = createReducerForCollection(name, pluralName, constants)
   const fetch = createFetchForCollection(pluralName, createUrl, isResponseValid, constants)
 
@@ -21,6 +22,7 @@ export default function createCollection (name, createUrl, isResponseValid = _.i
     [`add${name}`]: add,
     [`fetch${pluralName}`]: fetch,
     [`delete${name}`]: deleteItem,
+    [`update${name}`]: update,
     [pluralName.toLowerCase()]: reducer
   }
 }
@@ -46,6 +48,19 @@ function createDeleteItem (name, { DELETE }) {
     return {
       type: DELETE,
       payload: { key, id }
+    }
+  }
+}
+
+function createUpdate (name, { UPDATE }) {
+  return function update (...args) {
+    const item = Immutable.fromJS(_.last(args))
+    const id = item.get('id')
+    const key = createKey(_.initial(args))
+
+    return {
+      type: UPDATE,
+      payload: { key, id, item }
     }
   }
 }
@@ -119,6 +134,7 @@ function createReducerForCollection (name, pluralName, constants) {
   const {
     FAILED,
     DELETE,
+    UPDATE,
     FINISHED,
     IN_PROGRESS,
     FETCH_FAILED,
@@ -176,6 +192,7 @@ function createReducerForCollection (name, pluralName, constants) {
 
   return createReducer(new FetchState(), {
     [DELETE]: deleteItem,
+    [UPDATE]: update,
     [FAILED]: setStatus(FETCH_FAILED),
     [IN_PROGRESS]: setStatus(FETCH_IN_PROGRESS),
     [FINISHED]: [setStatus(FETCH_FINISHED), setResult]
@@ -198,6 +215,20 @@ function createReducerForCollection (name, pluralName, constants) {
 
     function itemsWithWrongId (item) {
       return item.get('id') !== id
+    }
+  }
+
+  function update (state, { key, id, item }) {
+    return state.update('fetches', (fetches) => {
+      const index = fetches
+        .getIn([key, 'result'])
+        .findIndex(itemWithId)
+
+      return fetches.setIn([key, 'result', index], item)
+    })
+
+    function itemWithId (item) {
+      return item.get('id') === id
     }
   }
 
@@ -238,10 +269,12 @@ function createConstants (name, pluralName) {
   const FINISHED = `${constantPluralName}_FINISHED`
   const FAILED = `${constantPluralName}_FAILED`
   const DELETE = `DELETE_${name.toUpperCase()}`
+  const UPDATE = `UPDATE_${name.toUpperCase()}`
 
   return {
     FAILED,
     DELETE,
+    UPDATE,
     FINISHED,
     IN_PROGRESS,
     FETCH_FAILED,

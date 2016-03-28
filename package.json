@@ -1,6 +1,6 @@
 {
   "name": "redux-async-collection",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Creates a reducer, immutable state and actions for an async collection",
   "main": "dist/createCollection.js",
   "scripts": {

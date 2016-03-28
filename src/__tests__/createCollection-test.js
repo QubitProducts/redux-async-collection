@@ -128,6 +128,32 @@ describe('createCollection', () => {
     })
   })
 
+  describe('when I update an item', () => {
+    beforeEach(() => {
+      data = [{
+        id: 1, name: 'foo'
+      }, {
+        id: 2, name: 'bar'
+      }, {
+        id: 3, name: 'baz'
+      }]
+      res = when({ status: 200, data })
+
+      return fetchThings(fooId, barId, 2)
+    })
+
+    beforeEach(() => {
+      updateThing(fooId, barId, { id: 2, name: 'quux' })
+
+      return fetchThings(fooId, barId, 2)
+    })
+
+    it('should update the item', () => {
+      expect(result.item).to.eql(Immutable.fromJS({ id: 2, name: 'quux' }))
+      expect(result.items.size).to.eql(3)
+    })
+  })
+
   describe('when a fetch is in progress', () => {
     beforeEach(() => {
       let deferred = when.defer()
@@ -208,6 +234,10 @@ describe('createCollection', () => {
 
   function deleteThing (fooId, barId, id) {
     store.dispatch(collection.deleteThing(fooId, barId, id))
+  }
+
+  function updateThing (fooId, barId, thing) {
+    store.dispatch(collection.updateThing(fooId, barId, thing))
   }
 
   function fetchThings (fooId, barId, id) {

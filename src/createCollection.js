@@ -2,6 +2,7 @@ import _ from 'lodash'
 import axios from 'axios'
 import Immutable from 'immutable'
 import invariant from 'invariant'
+import pluralize from 'pluralize'
 import createReducer from './createReducer'
 
 export const REQUEST_TIMEOUT = 3000
@@ -9,7 +10,7 @@ export const REQUEST_TIMEOUT = 3000
 export default function createCollection (name, createUrl, isResponseValid = _.isArray) {
   invariant(_.isString(name), '`name` required')
 
-  const pluralName = _.capitalize(name + 's')
+  const pluralName = _.capitalize(pluralize(name))
   const constants = createConstants(name, pluralName)
 
   const add = createAdd(name, constants)

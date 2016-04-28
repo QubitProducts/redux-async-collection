@@ -38,6 +38,12 @@ describe('createCollection', () => {
     sandbox.restore()
   })
 
+  describe('when the entity\'s name is a weird plural', () => {
+    it('should properly pluralize it', () => {
+      expect(createCollection('Property').properties).to.exist
+    })
+  })
+
   describe('when a fetch has not started', () => {
     beforeEach(() => {
       data = [{

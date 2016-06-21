@@ -5,7 +5,7 @@ import invariant from 'invariant'
 import pluralize from 'pluralize'
 import createReducer from './createReducer'
 
-export const REQUEST_TIMEOUT = 3000
+export const REQUEST_TIMEOUT = 10000 // 10s
 
 export default function createCollection (name, createUrl, isResponseValid = _.isArray) {
   invariant(_.isString(name), '`name` required')

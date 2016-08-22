@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import when from 'when'
 import sinon from 'sinon'
 import axios from 'axios'
@@ -78,6 +79,30 @@ describe('createCollection', () => {
 
     it('should NOT say were loading the items', () => {
       expect(result.isFetching).to.eql(false)
+    })
+  })
+
+  describe('when a path is specified and a fetch has completed', () => {
+    beforeEach(() => {
+      collection = createCollection({
+        name: 'Thing',
+        createUrl,
+        path: 'nested'
+      })
+      const things = collection.things
+      store = applyMiddleware(thunkMiddleware)(createStore)(combineReducers({ nested: combineReducers({ things }) }))
+      data = [{
+        id: 1, name: 'foo'
+      }, {
+        id: 2, name: 'bar'
+      }]
+      res = when({ status: 200, data })
+
+      return fetchThings(fooId, barId, 2, 'nested')
+    })
+
+    it('should return the item', () => {
+      expect(result.item).to.eql(Immutable.fromJS(data[1]))
     })
   })
 
@@ -246,13 +271,13 @@ describe('createCollection', () => {
     store.dispatch(collection.updateThing(fooId, barId, thing))
   }
 
-  function fetchThings (fooId, barId, id) {
+  function fetchThings (fooId, barId, id, path = []) {
     store.dispatch(collection.fetchThings(fooId, barId))
 
     return delay(1).then(getResult)
 
     function getResult () {
-      const { things } = store.getState()
+      const things = _.get(store.getState(), [].concat(path).concat('things'))
 
       result = {
         isFetching: things.isFetching(fooId, barId),

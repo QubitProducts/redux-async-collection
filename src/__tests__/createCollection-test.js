@@ -84,7 +84,11 @@ describe('createCollection', () => {
 
   describe('when a path is specified and a fetch has completed', () => {
     beforeEach(() => {
-      collection = createCollection('Thing', createUrl, 'nested')
+      collection = createCollection({
+        name: 'Thing',
+        createUrl,
+        path: 'nested'
+      })
       const things = collection.things
       store = applyMiddleware(thunkMiddleware)(createStore)(combineReducers({ nested: combineReducers({ things }) }))
       data = [{

@@ -7,8 +7,18 @@ import createReducer from './createReducer'
 
 export const REQUEST_TIMEOUT = 10000 // 10s
 
-export default function createCollection (name, createUrl, path, isResponseValid = _.isArray) {
+export default function createCollection (name, createUrl, isResponseValid = _.isArray) {
+  let params = {}
+  if (typeof name === 'object') {
+    params = name
+    name = params.name
+    createUrl = params.createUrl
+    isResponseValid = params.isResponseValid || _.isArray
+  }
+
   invariant(_.isString(name), '`name` required')
+
+  const path = [].concat(params.path || [])
 
   const pluralName = _.capitalize(pluralize(name))
   const constants = createConstants(name, pluralName)
@@ -70,12 +80,12 @@ function lowerFirst (str = '') {
   return str[0].toLowerCase() + str.substring(1)
 }
 
-function createFetchForCollection (name, createUrl, isResponseValid, constants, path = []) {
+function createFetchForCollection (name, createUrl, isResponseValid, constants, path) {
   const { FAILED, FINISHED, IN_PROGRESS } = constants
 
   return function fetch (...args) {
     return function (dispatch, getState) {
-      const state = _.get(getState(), [].concat(path).concat(lowerFirst(name)))
+      const state = _.get(getState(), path.concat(lowerFirst(name)))
       const isFetching = state.isFetching(...args)
       const hasFetched = state.hasFetched(...args)
       const hasFailedToFetch = state.hasFailedToFetch(...args)

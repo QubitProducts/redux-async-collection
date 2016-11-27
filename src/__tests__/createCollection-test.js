@@ -106,6 +106,34 @@ describe('createCollection', () => {
     })
   })
 
+  describe('when a previous fetch has completed and I refresh the items', () => {
+    beforeEach(() => {
+      collection = createCollection({
+        name: 'Thing',
+        createUrl,
+        path: 'nested'
+      })
+      const things = collection.things
+      store = applyMiddleware(thunkMiddleware)(createStore)(combineReducers({ nested: combineReducers({ things }) }))
+      data = [{
+        id: 1, name: 'foo'
+      }, {
+        id: 2, name: 'bar'
+      }]
+      res = when({ status: 200, data })
+
+      return fetchThings(fooId, barId, 2, 'nested')
+    })
+
+    beforeEach(() => {
+      store.dispatch(collection.refreshThings(fooId, barId))
+    })
+
+    it('should have called get again', () => {
+      expect(get).calledTwice
+    })
+  })
+
   describe('when I add an item', () => {
     let expectedThing
 

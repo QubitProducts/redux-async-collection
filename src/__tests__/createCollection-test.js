@@ -107,6 +107,8 @@ describe('createCollection', () => {
   })
 
   describe('when a previous fetch has completed and I refresh the items', () => {
+    let subscriber
+
     beforeEach(() => {
       collection = createCollection({
         name: 'Thing',
@@ -126,6 +128,9 @@ describe('createCollection', () => {
     })
 
     beforeEach(() => {
+      subscriber = sinon.spy()
+      store.subscribe(subscriber)
+
       store.dispatch(collection.refreshThings(fooId, barId))
     })
 

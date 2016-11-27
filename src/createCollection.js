@@ -82,7 +82,7 @@ function lowerFirst (str = '') {
 }
 
 function createFetchesForCollection (name, createUrl, isResponseValid, constants, path) {
-  const { FAILED, FINISHED, IN_PROGRESS } = constants
+  const { FAILED, FINISHED, IN_PROGRESS, REFRESHING } = constants
 
   return {
     fetch: (...args) => fetch(false, ...args),
@@ -108,7 +108,7 @@ function createFetchesForCollection (name, createUrl, isResponseValid, constants
 
       dispatch({
         payload: { key },
-        type: IN_PROGRESS
+        type: hasFetched ? REFRESHING : IN_PROGRESS
       })
 
       return axios
@@ -287,6 +287,7 @@ function createConstants (name, pluralName) {
   const FETCH_FINISHED = 'FETCH_FINISHED'
   const FETCH_IN_PROGRESS = 'FETCH_IN_PROGRESS'
   const IN_PROGRESS = `${constantPluralName}_IN_PROGRESS`
+  const REFRESHING = `${constantPluralName}_REFRESHING`
   const FINISHED = `${constantPluralName}_FINISHED`
   const FAILED = `${constantPluralName}_FAILED`
   const DELETE = `DELETE_${name.toUpperCase()}`
@@ -298,6 +299,7 @@ function createConstants (name, pluralName) {
     UPDATE,
     FINISHED,
     IN_PROGRESS,
+    REFRESHING,
     FETCH_FAILED,
     FETCH_FINISHED,
     FETCH_IN_PROGRESS

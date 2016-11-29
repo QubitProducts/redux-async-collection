@@ -27,11 +27,12 @@ export default function createCollection (name, createUrl, isResponseValid = _.i
   const deleteItem = createDeleteItem(name, constants)
   const update = createUpdate(name, constants)
   const reducer = createReducerForCollection(name, pluralName, constants)
-  const fetch = createFetchForCollection(pluralName, createUrl, isResponseValid, constants, path)
+  const { fetch, refresh } = createFetchesForCollection(pluralName, createUrl, isResponseValid, constants, path)
 
   return {
     [`add${name}`]: add,
     [`fetch${pluralName}`]: fetch,
+    [`refresh${pluralName}`]: refresh,
     [`delete${name}`]: deleteItem,
     [`update${name}`]: update,
     [pluralName.toLowerCase()]: reducer
@@ -80,17 +81,22 @@ function lowerFirst (str = '') {
   return str[0].toLowerCase() + str.substring(1)
 }
 
-function createFetchForCollection (name, createUrl, isResponseValid, constants, path) {
-  const { FAILED, FINISHED, IN_PROGRESS } = constants
+function createFetchesForCollection (name, createUrl, isResponseValid, constants, path) {
+  const { FAILED, FINISHED, IN_PROGRESS, REFRESHING } = constants
 
-  return function fetch (...args) {
+  return {
+    fetch: (...args) => fetch(false, ...args),
+    refresh: (...args) => fetch(true, ...args)
+  }
+
+  function fetch (force, ...args) {
     return function (dispatch, getState) {
       const state = _.get(getState(), path.concat(lowerFirst(name)))
       const isFetching = state.isFetching(...args)
       const hasFetched = state.hasFetched(...args)
       const hasFailedToFetch = state.hasFailedToFetch(...args)
 
-      if (isFetching || hasFetched || hasFailedToFetch) {
+      if (isFetching || (!force && hasFetched) || (!force && hasFailedToFetch)) {
         return
       }
 
@@ -102,7 +108,7 @@ function createFetchForCollection (name, createUrl, isResponseValid, constants, 
 
       dispatch({
         payload: { key },
-        type: IN_PROGRESS
+        type: hasFetched ? REFRESHING : IN_PROGRESS
       })
 
       return axios
@@ -281,6 +287,7 @@ function createConstants (name, pluralName) {
   const FETCH_FINISHED = 'FETCH_FINISHED'
   const FETCH_IN_PROGRESS = 'FETCH_IN_PROGRESS'
   const IN_PROGRESS = `${constantPluralName}_IN_PROGRESS`
+  const REFRESHING = `${constantPluralName}_REFRESHING`
   const FINISHED = `${constantPluralName}_FINISHED`
   const FAILED = `${constantPluralName}_FAILED`
   const DELETE = `DELETE_${name.toUpperCase()}`
@@ -292,6 +299,7 @@ function createConstants (name, pluralName) {
     UPDATE,
     FINISHED,
     IN_PROGRESS,
+    REFRESHING,
     FETCH_FAILED,
     FETCH_FINISHED,
     FETCH_IN_PROGRESS
